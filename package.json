@@ -72,7 +72,7 @@
     "rollup-plugin-uglify": "^1.0.1"
   },
   "dependencies": {
-    "styled-components": "^1.0.10"
+    "styled-components": "^2.0.0"
   },
   "peerDependencies": {
     "react": "^15.0.0"
