@@ -1,4 +1,5 @@
 // @flow
+import React from "react";
 import styled from "styled-components";
 import { withLayout } from "./LayoutProvider";
 import { breakpoint, applyBreakpointStyle } from "../utils";
