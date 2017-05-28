@@ -2,7 +2,6 @@
 import babel from 'rollup-plugin-babel'
 import commonjs from 'rollup-plugin-commonjs'
 import inject from 'rollup-plugin-inject'
-import json from 'rollup-plugin-json'
 import nodeResolve from 'rollup-plugin-node-resolve'
 import replace from 'rollup-plugin-replace'
 import uglify from 'rollup-plugin-uglify'
@@ -16,14 +15,20 @@ console.log(`Creating ${env} bundle...`)
 
 const targets = prod ?
   [
-    { dest: 'dist/hedron.min.js', format: 'umd' },
+    { dest: 'dist/hedron.min.js', format: 'cjs' },
   ] :
   [
-    { dest: 'dist/hedron.js', format: 'umd' },
+    { dest: 'dist/hedron.js', format: 'cjs' },
     { dest: 'dist/hedron.es.js', format: 'es' },
   ]
 
 const plugins = [
+  nodeResolve({
+    module: false,
+    jsnext: false,
+    main: true,
+  }),
+  commonjs(),
   {
     resolveId(importee) {
       if (importee === processShim) return importee
@@ -35,26 +40,28 @@ const plugins = [
     },
   },
   babel({
-    exclude: 'node_modules/**',
     babelrc: false,
     presets: [
-      'es2015-rollup',
+      [
+        'env',
+        {
+          modules: false,
+          targets: {
+            browsers: ['last 2 versions', '> 5%'],
+          },
+        },
+      ],
+      'stage-0',
       'react',
-      'stage-2'
     ],
     plugins: [
-      'array-includes',
-      'external-helpers',
       'flow-react-proptypes',
-      'styled-components'
+      'styled-components',
     ],
   }),
-  commonjs(),
   inject({
     process: processShim,
   }),
-  json(),
-  nodeResolve(),
   replace({
     'process.env.NODE_ENV': JSON.stringify(prod ? 'production' : 'development'),
   }),
@@ -64,11 +71,7 @@ if (prod) plugins.push(uglify())
 
 export default {
   entry: 'src/index.js',
-  exports: 'named',
-  external: ['react'],
-  globals: { react: 'React' },
-  moduleName: 'hedron',
+  external: ['react', 'styled-components'],
   plugins,
   targets,
 }
-
