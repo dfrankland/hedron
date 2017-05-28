@@ -45,7 +45,8 @@ const plugins = [
     plugins: [
       'array-includes',
       'external-helpers',
-      'flow-react-proptypes'
+      'flow-react-proptypes',
+      'styled-components'
     ],
   }),
   commonjs(),
